@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %} 
+<form action="" method="post" class="buttons">
+    <h3>Enter The Chat Room</h3>
+    <div>
+        <labe> <h2>HELLO  {{name}} </h2> </label>
+    </div>
+    <div class="join">
+        <input type="text" name="code" placeholder="Room Code" value="{{code}}"/>
+        <button type="submit" name="join" class="join">Join a Room</button>
+    </div>
+    <button type="submit" name="create" class="create-btn">Create a Room</button>
+    <a href="{{url_for('logout')}}">Day la logout</a>
+    {% if error %}
+    <ul>
+        <li> {{error}} </li>
+    </ul>
+    {% endif %}
+</form>
+{% endblock %}
