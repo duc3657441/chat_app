@@ -15,7 +15,7 @@ app.config["SESSION_COOKIE_AGE"] = 1800
 # Session(app)
 socketio = SocketIO(app)
 
-rooms = {}
+# rooms = {}
 # progre sql
 # bảng onl id trong bảng user
 # user (user_id, username, pass_hash, status) status -> true, logout ->false
@@ -56,8 +56,8 @@ def generate_unique_code(length):
         if Q is None:
             break
 
-        if code not in rooms:
-            break
+        # if code not in rooms:
+        #     break
 
     return code
 
@@ -130,7 +130,7 @@ def home():
             except Exception as e:
                 return render_template("error.html",message = e)
             
-            rooms[room] = {"members" : 0, "messages" : []} # kết nối vô sql 
+            # rooms[room] = {"members" : 0, "messages" : []} # kết nối vô sql 
         #khi nhap ma room
         else:
             try:
@@ -291,7 +291,7 @@ def connect(auth):
     except Exception as e:
         return render_template("error.html",message = e)
     
-    rooms[room]["members"] += 1
+    # rooms[room]["members"] += 1
     print(f"{name} join room {room}")
 
 @socketio.on("disconnect")
@@ -315,10 +315,10 @@ def disconnect():
     parameters = (session["room_id"],)
     results = call_postgres_function(func,parameters)
 
-    if room in rooms:
-        rooms[room]["members"] -= 1
-        if rooms[room]["members"] <= 0:
-            del rooms[room]
+    # if room in rooms:
+    #     rooms[room]["members"] -= 1
+    #     if rooms[room]["members"] <= 0:
+    #         del rooms[room]
 
     try:
         conn, cur = connectdb()
@@ -337,8 +337,9 @@ def disconnect():
 @socketio.on("message")
 def message(data):
     room = session["maRoom"]
-    if room not in rooms:
-        return
+    # xiu lam them phan check ngay day
+    # if room not in rooms:
+    #     return
     
     content = {
         "name" : session.get("lastName"),
@@ -356,7 +357,7 @@ def message(data):
                 conn.close()
     except Exception as e:
                 return render_template("error.html",message = e)
-    rooms[room]["messages"].append(content)
+    # rooms[room]["messages"].append(content)
     print(f"{session.get("lastName")} said: {data['data']}")
     
 if __name__ == "__main__":
