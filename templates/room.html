@@ -43,7 +43,7 @@
 </script>
 {% for msg in messages %}
     <script type="text/javascript">
-        createMessage("{{msg.name}}","{{msg.message}}");
+        createMessage("{{msg[0]}}","{{msg[1]}}");
     </script>
 {% endfor%}
 

@@ -30,4 +30,16 @@ CREATE TABLE Onlines(
 );
 
 
-INSERT INTO Rooms (maRoom, roomName, members) VALUES ('Abc','test', '0')
+
+CREATE OR REPLACE FUNCTION delete_empty_room(func_room_id INTEGER)
+RETURNS void AS $$
+BEGIN
+    IF EXISTS (SELECT * FROM Rooms WHERE RoomID = func_room_id AND members > 0) THEN
+    RETURN;
+  END IF;
+	if exists (select * from messages where room_id = func_room_id) THEN
+	 DELETE FROM messages WHERE room_id = func_room_id;
+	 end if;
+  DELETE FROM Rooms WHERE roomid = func_room_id AND members <= 0;
+END;
+$$ LANGUAGE plpgsql;

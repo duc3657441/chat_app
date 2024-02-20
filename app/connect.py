@@ -41,5 +41,5 @@ def call_postgres_function(func_name, params):
             conn.close()
 
 func = "delete_empty_room"
-parameters = ("21",)
+parameters = ("23",)
 results = call_postgres_function(func,parameters)

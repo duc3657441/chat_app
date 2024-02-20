@@ -174,7 +174,18 @@ def room():
         return redirect(url_for("home"))
     
     session["room_id"] = Q[0]
-    return render_template("room.html", room = room, messages = rooms[room]["messages"])
+    try:
+        conn, cur = connectdb()
+        insert_script = "select lastName, chat from users, messages where user_id = UserID and room_id = %s"
+        insert_value = (session["room_id"],)
+        cur.execute(insert_script,insert_value)
+        results = cur.fetchall()
+        cur.close()
+        conn.close()
+    except Exception as e:
+        return render_template("error.html",message = e)
+    # return render_template("room.html", room = room, messages = rooms[room]["messages"])
+    return render_template("room.html", room = room, messages = results)
 
 @app.route("/login", methods = ["POST", "GET"])
 def login():
@@ -286,7 +297,7 @@ def connect(auth):
 @socketio.on("disconnect")
 def disconnect():
     room = session.get("maRoom")
-    name = session.get("lastname")
+    name = session.get("lastName")
     leave_room(room)
 
     try:
@@ -308,6 +319,17 @@ def disconnect():
         rooms[room]["members"] -= 1
         if rooms[room]["members"] <= 0:
             del rooms[room]
+
+    try:
+        conn, cur = connectdb()
+        insert_script = "update users set online = 'false' where email LIKE %s"
+        insert_value = (session["email"],)
+        cur.execute(insert_script,insert_value)
+        conn.commit()
+        cur.close()
+        conn.close()
+    except Exception as e:
+        return render_template("error.html",message = e)
 
     send({"name": name, "message": "has left the room"}, to = room)
     print(f"{name} has left the room {room}")
